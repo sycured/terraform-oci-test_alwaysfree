@@ -12,6 +12,8 @@ openssl rsa -pubout -in ~/.oci/oci_api_key.pem -out ~/.oci/oci_api_key_public.pe
 ### copy public key to paste on OCI website
 `cat ~/.oci/oci_api_key_public.pem | pbcopy`
 
+paste on https://console.sa-saopaulo-1.oraclecloud.com/identity/users/ocid1.user.oc1../api-keys
+
 ### copy fingerprint to paste on your .tfvars or override.tf
 `openssl rsa -pubout -outform DER -in ~/.oci/oci_api_key.pem | openssl md5 -c`
 
