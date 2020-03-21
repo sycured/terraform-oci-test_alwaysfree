@@ -1,4 +1,4 @@
-name: Terraform
+name: CI
 on:
   push:
     branches: [ master ]
@@ -8,47 +8,47 @@ jobs:
     container:
       image: centos:latest
     steps:
-      - name: 'Checkout'
-        uses: actions/checkout@master
-      - name: 'Install secrets to files'
-        env:
-          private_key: ${{ secrets.private_key }}
-          tenancy_ocid: ${{ secrets.tenancy_ocid }}
-          user_ocid: ${{ secrets.user_ocid }}
-          fingerprint: ${{ secrets.fingerprint }}
-          private_key_path: ${{ secrets.private_key_path }}
-          region: ${{ secrets.region }}
-          compartment_ocid: ${{ secrets.compartment_ocid }}
-          ssh_public_key: ${{ secrets.ssh_public_key }}
-        run: |
-          mkdir -p ~/.oci
-          echo "$private_key" > ~/.oci/oci_api_key.pem
-          echo "variable tenancy_ocid { default = \"$tenancy_ocid\" }" > override.tf
-          echo "variable user_ocid { default = \"$user_ocid\" }" >> override.tf
-          echo "variable fingerprint { default = \"$fingerprint\" }" >> override.tf
-          echo "variable private_key_path { default = \"$private_key_path\" }" >> override.tf
-          echo "variable region { default = \"$region\" }" >> override.tf
-          echo "variable compartment_ocid { default = \"$compartment_ocid\" }" >> override.tf
-          echo "variable ssh_public_key { default = \"$ssh_public_key\" }" >> override.tf
-      - name: 'Install wget + unzip'
-        run: yum install -y wget unzip
-      - name: 'Prepare Terraform'
-        run: |
-          wget -N https://releases.hashicorp.com/terraform/0.12.24/terraform_0.12.24_linux_amd64.zip
-          unzip terraform_0.12.24_linux_amd64.zip
-          rm terraform_0.12.24_linux_amd64.zip
-          chmod +x terraform
-      - name: 'Terraform Format'
-        run: ./terraform fmt
-      - name: 'Terraform Init'
-        run: ./terraform init
-      - name: 'Terraform Validate'
-        run: ./terraform validate
-      - name: 'Terraform Plan'
-        run: ./terraform plan -out planning
-      - name: 'Terraform Destroy'
-        run: ./terraform destroy -auto-approve
-      - name: 'Terraform Apply'
-        run: ./terraform apply -auto-approve "planning"
-      - name: 'Terraform Destroy'
-        run: ./terraform destroy -auto-approve
+    - name: 'Checkout'
+      uses: actions/checkout@master
+    - name: 'Install secrets to files'
+      env:
+        private_key: ${{ secrets.private_key }}
+        tenancy_ocid: ${{ secrets.tenancy_ocid }}
+        user_ocid: ${{ secrets.user_ocid }}
+        fingerprint: ${{ secrets.fingerprint }}
+        private_key_path: ${{ secrets.private_key_path }}
+        region: ${{ secrets.region }}
+        compartment_ocid: ${{ secrets.compartment_ocid }}
+        ssh_public_key: ${{ secrets.ssh_public_key }}
+      run: |
+        mkdir -p ~/.oci
+        echo "$private_key" > ~/.oci/oci_api_key.pem
+        echo "variable tenancy_ocid { default = \"$tenancy_ocid\" }" > override.tf
+        echo "variable user_ocid { default = \"$user_ocid\" }" >> override.tf
+        echo "variable fingerprint { default = \"$fingerprint\" }" >> override.tf
+        echo "variable private_key_path { default = \"$private_key_path\" }" >> override.tf
+        echo "variable region { default = \"$region\" }" >> override.tf
+        echo "variable compartment_ocid { default = \"$compartment_ocid\" }" >> override.tf
+        echo "variable ssh_public_key { default = \"$ssh_public_key\" }" >> override.tf
+    - name: 'Install wget + unzip'
+      run: yum install -y wget unzip
+    - name: 'Prepare Terraform'
+      run: |
+        wget -N https://releases.hashicorp.com/terraform/0.12.24/terraform_0.12.24_linux_amd64.zip
+        unzip terraform_0.12.24_linux_amd64.zip
+        rm terraform_0.12.24_linux_amd64.zip
+        chmod +x terraform
+    - name: 'Terraform Format'
+      run: ./terraform fmt
+    - name: 'Terraform Init'
+      run: ./terraform init
+    - name: 'Terraform Validate'
+      run: ./terraform validate
+    - name: 'Terraform Plan'
+      run: ./terraform plan -out planning
+    - name: 'Terraform Destroy'
+      run: ./terraform destroy -auto-approve
+    - name: 'Terraform Apply'
+      run: ./terraform apply -auto-approve "planning"
+    - name: 'Terraform Destroy'
+      run: ./terraform destroy -auto-approve
