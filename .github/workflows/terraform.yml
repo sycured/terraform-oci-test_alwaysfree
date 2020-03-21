@@ -1,4 +1,4 @@
-name: 'Terraform Validate'
+name: Terraform
 on: push
 jobs:
   terraform:
