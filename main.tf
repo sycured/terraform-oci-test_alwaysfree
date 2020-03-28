@@ -170,14 +170,6 @@ resource "oci_core_instance" "free_instance0" {
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
   }
-
-  provisioner "remote-exec" {
-    inline = [
-      "sudo dnf clean all",
-      "sudo dnf upgrade -y",
-      "sudo reboot"
-    ]
-  }
 }
 
 # get vnic IP and display the right ssh to this new instance
