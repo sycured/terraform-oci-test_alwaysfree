@@ -19,9 +19,11 @@ jobs:
         region: ${{ secrets.region }}
         compartment_ocid: ${{ secrets.compartment_ocid }}
         ssh_public_key: ${{ secrets.ssh_public_key }}
+        ssh_private_key: ${{ secrets.ssh_private_key }}
       run: |
         mkdir -p ~/.oci
         echo "$private_key" > ~/.oci/oci_api_key.pem
+        echo "$ssh_private_key" > ~/.oci/ssh
         echo "variable tenancy_ocid { default = \"$tenancy_ocid\" }" > override.tf
         echo "variable user_ocid { default = \"$user_ocid\" }" >> override.tf
         echo "variable fingerprint { default = \"$fingerprint\" }" >> override.tf
