@@ -45,10 +45,12 @@ jobs:
       run: ./terraform init
     - name: 'Terraform Validate'
       run: ./terraform validate
-    - name: 'Terraform Plan'
-      run: ./terraform plan -out planning
+    - name: 'Terraform Refresh'
+      run: ./terraform refresh
     - name: 'Terraform Destroy'
       run: ./terraform destroy -auto-approve
+    - name: 'Terraform Plan'
+      run: ./terraform plan -out planning
     - name: 'Terraform Apply'
       run: ./terraform apply -auto-approve "planning"
     - name: 'Terraform Destroy'
