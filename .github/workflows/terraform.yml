@@ -1,57 +1,36 @@
-name: CI
+name: Terraform
 on:
   push
 jobs:
   terraform:
+    name: 'Terraform'
     runs-on: 'ubuntu-latest'
-    container:
-      image: centos:latest
     steps:
     - name: 'Checkout'
       uses: actions/checkout@master
-    - name: 'Install secrets to files'
-      env:
-        private_key: ${{ secrets.private_key }}
-        tenancy_ocid: ${{ secrets.tenancy_ocid }}
-        user_ocid: ${{ secrets.user_ocid }}
-        fingerprint: ${{ secrets.fingerprint }}
-        private_key_path: ${{ secrets.private_key_path }}
-        region: ${{ secrets.region }}
-        compartment_ocid: ${{ secrets.compartment_ocid }}
-        ssh_public_key: ${{ secrets.ssh_public_key }}
-        ssh_private_key: ${{ secrets.ssh_private_key }}
-      run: |
-        mkdir -p ~/.oci
-        echo "$private_key" > ~/.oci/oci_api_key.pem
-        echo "$ssh_private_key" > ~/.oci/ssh
-        echo "variable tenancy_ocid { default = \"$tenancy_ocid\" }" > override.tf
-        echo "variable user_ocid { default = \"$user_ocid\" }" >> override.tf
-        echo "variable fingerprint { default = \"$fingerprint\" }" >> override.tf
-        echo "variable private_key_path { default = \"$private_key_path\" }" >> override.tf
-        echo "variable region { default = \"$region\" }" >> override.tf
-        echo "variable compartment_ocid { default = \"$compartment_ocid\" }" >> override.tf
-        echo "variable ssh_public_key { default = \"$ssh_public_key\" }" >> override.tf
-    - name: 'Install wget + unzip'
-      run: yum install -y wget unzip
-    - name: 'Prepare Terraform'
-      run: |
-        wget -N https://releases.hashicorp.com/terraform/0.12.24/terraform_0.12.24_linux_amd64.zip
-        unzip terraform_0.12.24_linux_amd64.zip
-        rm terraform_0.12.24_linux_amd64.zip
-        chmod +x terraform
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
     - name: 'Terraform Format'
-      run: ./terraform fmt
+      id: fmt
+      run: terraform fmt -check
+    - run: echo ${{ steps.fmt.outputs.stdout }}
+    - run: echo ${{ steps.fmt.outputs.stderr }}
+    - run: echo ${{ steps.fmt.outputs.exitcode }}
     - name: 'Terraform Init'
-      run: ./terraform init
+      id: init
+      run: terraform init
+    - run: echo ${{ steps.init.outputs.stdout }}
+    - run: echo ${{ steps.init.outputs.stderr }}
+    - run: echo ${{ steps.init.outputs.exitcode }}
     - name: 'Terraform Validate'
-      run: ./terraform validate
-    - name: 'Terraform Refresh'
-      run: ./terraform refresh
-    - name: 'Terraform Destroy'
-      run: ./terraform destroy -auto-approve
+      id: validate
+      run: terraform validate
+    - run: echo ${{ steps.validate.outputs.stdout }}
+    - run: echo ${{ steps.validate.outputs.stderr }}
+    - run: echo ${{ steps.validate.outputs.exitcode }}
     - name: 'Terraform Plan'
-      run: ./terraform plan -out planning
-    - name: 'Terraform Apply'
-      run: ./terraform apply -auto-approve "planning"
-    - name: 'Terraform Destroy'
-      run: ./terraform destroy -auto-approve
+      id: plan
+      run: terraform plan
+    - run: echo ${{ steps.plan.outputs.stdout }}
+    - run: echo ${{ steps.plan.outputs.stderr }}
+    - run: echo ${{ steps.plan.outputs.exitcode }}
