@@ -36,6 +36,16 @@ data "oci_core_app_catalog_subscriptions" "oracle-linux_subscriptions" {
 
   filter {
     name   = "listing_resource_version"
-    values = ["${oci_core_app_catalog_subscription.oracle-linux_subscription.listing_resource_version}"]
+    values = [oci_core_app_catalog_subscription.oracle-linux_subscription.listing_resource_version]
+  }
+}
+
+data "oci_core_images" "ubuntu-20-04-minimal" {
+  compartment_id   = var.compartment_ocid
+  operating_system = "Canonical Ubuntu"
+  filter {
+    name   = "display_name"
+    values = ["^Canonical-Ubuntu-20.04-Minimal-([\\.0-9-]+)"]
+    regex  = true
   }
 }

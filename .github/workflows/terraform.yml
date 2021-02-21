@@ -1,36 +1,32 @@
-name: Terraform
+name: 'Terraform'
+
 on:
-  push
+  push:
+    branches:
+    - master
+  pull_request:
+
 jobs:
   terraform:
     name: 'Terraform'
-    runs-on: 'ubuntu-latest'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
     steps:
-    - name: 'Checkout'
-      uses: actions/checkout@master
+    - name: Checkout
+      uses: actions/checkout@v2
+
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
-    - name: 'Terraform Format'
-      id: fmt
-      run: terraform fmt -check
-    - run: echo ${{ steps.fmt.outputs.stdout }}
-    - run: echo ${{ steps.fmt.outputs.stderr }}
-    - run: echo ${{ steps.fmt.outputs.exitcode }}
-    - name: 'Terraform Init'
-      id: init
+
+    - name: Terraform Init
       run: terraform init
-    - run: echo ${{ steps.init.outputs.stdout }}
-    - run: echo ${{ steps.init.outputs.stderr }}
-    - run: echo ${{ steps.init.outputs.exitcode }}
-    - name: 'Terraform Validate'
-      id: validate
+
+    - name: Terraform Format
+      run: terraform fmt -recursive -check
+    
+    - name: Terraform Validate
       run: terraform validate
-    - run: echo ${{ steps.validate.outputs.stdout }}
-    - run: echo ${{ steps.validate.outputs.stderr }}
-    - run: echo ${{ steps.validate.outputs.exitcode }}
-    - name: 'Terraform Plan'
-      id: plan
-      run: terraform plan
-    - run: echo ${{ steps.plan.outputs.stdout }}
-    - run: echo ${{ steps.plan.outputs.stderr }}
-    - run: echo ${{ steps.plan.outputs.exitcode }}

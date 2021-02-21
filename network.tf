@@ -6,14 +6,21 @@ resource "oci_core_virtual_network" "vcn" {
 }
 
 resource "oci_core_subnet" "subnet" {
-  compartment_id    = var.compartment_ocid
-  cidr_block        = "10.100.10.0/24"
-  display_name      = "subvcn"
-  dns_label         = "subvcn"
-  dhcp_options_id   = oci_core_virtual_network.vcn.default_dhcp_options_id
-  route_table_id    = oci_core_route_table.route_table.id
-  security_list_ids = [oci_core_security_list.security_list_out.id, oci_core_security_list.security_list_ssh.id, oci_core_security_list.security_list_web.id]
-  vcn_id            = oci_core_virtual_network.vcn.id
+  compartment_id  = var.compartment_ocid
+  cidr_block      = "10.100.10.0/24"
+  display_name    = "subvcn"
+  dns_label       = "subvcn"
+  dhcp_options_id = oci_core_virtual_network.vcn.default_dhcp_options_id
+  route_table_id  = oci_core_route_table.route_table.id
+  security_list_ids = [
+    oci_core_security_list.output.id,
+    oci_core_security_list.mosh.id,
+    //    oci_core_security_list.kafka.id,
+    oci_core_security_list.ssh.id,
+    oci_core_security_list.web.id,
+    oci_core_security_list.wireguard.id
+  ]
+  vcn_id = oci_core_virtual_network.vcn.id
 }
 
 resource "oci_core_internet_gateway" "internet_gateway" {

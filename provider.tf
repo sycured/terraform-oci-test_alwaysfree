@@ -1,5 +1,4 @@
 provider "oci" {
-  version          = "> 3.65"
   fingerprint      = var.fingerprint
   private_key_path = pathexpand(var.private_key_path)
   region           = var.region
